@@ -2,5 +2,5 @@
 
 echo "hello"
 ls -l /tmp
-find /home/ -name "*.json"
+find /home/ -name "*.txt"
 echo "byte"
