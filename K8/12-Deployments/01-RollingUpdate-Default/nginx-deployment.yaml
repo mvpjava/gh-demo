@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kubernetes.io/change-cause: "Company website using nginx v1.0"
+  name: nginx-web-deployment
+  labels:
+    app: nginx-web
+spec:
+  replicas: 3
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: nginx-web
+      
+  strategy:
+    type: RollingUpdate
+    
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+
+  template:
+    metadata:
+      labels:
+        app: nginx-web
+        version: v1
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx:1.24
+        ports:
+        - containerPort: 80
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 3
+          failureThreshold: 3 

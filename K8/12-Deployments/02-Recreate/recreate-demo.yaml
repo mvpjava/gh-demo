@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maintenance-app-deployment
+  labels:
+    app: maintenance-app
+spec:
+  # Maintain 3 replicas
+  replicas: 3
+  
+  selector:
+    matchLabels:
+      app: maintenance-app
+      
+  strategy:
+    type: TODO 
+
+  template:
+    metadata:
+      labels:
+        app: maintenance-app
+        version: v1
+    spec:
+      containers:
+      - name: app-container
+        image: busybox:1.35
+        command: ["/bin/sh", "-c", "echo 'V1 Running' && sleep 3600"]
+        ports:
+        - containerPort: 80

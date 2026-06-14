@@ -1,0 +1,64 @@
+kubectl apply -f nginx-deployment.yaml
+
+# Verify the Pods: Check that 3 Pods are running, and confirm the version label.
+# The -L (or --label-columns) flag allows you to add custom columns to your kubectl get output based on pod labels.
+kubectl get pods -l app=nginx-web -L version
+
+# Take some seconds for all 3 to come up
+kubectl get deployment nginx-web-deployment -o wide
+
+kubectl describe deployment nginx-web-deployment
+
+# checkout deployment history
+kubectl rollout history deployment/nginx-web-deployment
+
+# UPDATE APP, open nginx-deployment.yaml and make changes to ..
+  - annotation for "deployment history comment"
+  - change label to v2
+  - change image: nginx:1.25
+  
+# Apply changes
+kubectl apply -f nginx-deployment.yaml
+
+# Observe the Rolling Update (The Demo Key)
+kubectl get pods -l app=nginx-web -L version -o wide --watch
+
+# Confirm all 3 are at v2 under VERSION column
+kubectl get pods -l app=nginx-web -L version
+
+# Verify Final State
+kubectl rollout status deployment/nginx-web-deployment
+kubectl rollout history deployment/nginx-web-deployment
+
+#perform ROLLBACKs
+# Option A: Rollback to the Immediately Previous Version
+kubectl rollout undo deployment/nginx-web-deployment
+
+kubectl get pods -l app=nginx-web -L version --watch
+
+# Option B: Rollback to a Specific Revision
+kubectl rollout undo deployment/nginx-web-deployment --to-revision=1
+
+kubectl get pods -l app=nginx-web -L version --watch
+
+# Get more info from rollout history to see image name (your version number may be different than ones below)
+kubectl rollout history deployment/nginx-web-deployment --revision=2
+kubectl rollout history deployment/nginx-web-deployment --revision=3
+
+# Cleanup
+kubectl delete deployment nginx-web-deployment
+
+
+
+Rollout History ...
+Where did revision v1 go?
+K8 notices that rev3 and rev1 are identical, so removes rev1
+When Revision 3 is created (identical to Revision 1), Kubernetes recognizes that Revision 1 is now redundant. It is an "old" revision because its configuration is now duplicated by the "new" Revision 3.
+Deployment's garbage collection policy, controlled by the field spec.revisionHistoryLimit (default = 10)
+
+#The old Pods are deleted, but the old ReplicaSet is kept for rollback purposes.
+#By default, a Deployment keeps 10 old ReplicaSets for rollout history and rollback (gets garbage collected or if delete deployment)
+#Kubernetes only removes old ReplicaSets that are scaled to 0.
+kubectl get rs -l app=nginx-web
+
+
