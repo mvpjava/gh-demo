@@ -1,0 +1,52 @@
+kubectl apply -f clusterip-service-deployment.yaml
+
+# Verify ClusterIP: Get the stable IP address and DNS name.
+# Output:** You will see a `CLUSTER-IP` assigned (e.g., `10.96.0.100`). This IP is the stable target for all internal traffic.
+
+kubectl get svc webapp-service -o wide
+kubectl get svc -o wide     # all services
+
+#View endpoints
+kubectl get endpoints webapp-service
+
+# When you show all services, you will see "kubernetes".  The "kubernetes" Service is a special, default Service that is automatically created in the default namespace when a cluster is launched.
+# It is unique and serves a single, crucial purpose: providing an internal access point for the Kubernetes API Server itself.
+
+kubectl get deployment webapp-deployment -o wide
+
+
+######## TEST -  Demonstration of Internal Access ########
+# To prove the Service works, we will create a temporary client Pod and use curl to reach the Nginx application using the Service's stable DNS name.
+# Step A: Create a Temporary Client Pod
+# This busybox Pod is designed to run one command and then exit.
+#########################################################
+
+kubectl run client-pod --image=busybox:1.36 --rm -it --restart=Never -- sh
+(This command places you into a shell inside the temporary Pod.)
+
+
+# #### OPTION 1 ####
+# Use the Service name: 'webapp-service'
+# The port is 80 (the service port)
+
+wget -O- webapp-service:80
+
+
+Q - What cant I just use wget on host node with "wget http://localhost:80" ?
+A - ???
+
+# #### OPTION 2 ####
+# This command forwards traffic from your local machine's port 8080 
+# to the internal Service port 80 of the "nginx-internal-service"
+
+kubectl port-forward svc/webapp-service 8080:80 &
+
+# only from localhost, cannot access from internet
+wget -O- http://localhost:8080
+
+# Cleanup
+kubectl delete deployment webapp-deployment
+kubectl delete service webapp-service
+
+# Find the Process ID (PID) listening on 8080 and kill it (from port-forward command)
+sudo kill $(sudo lsof -t -i:8080)

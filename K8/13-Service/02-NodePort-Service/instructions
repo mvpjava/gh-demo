@@ -1,0 +1,27 @@
+
+kubectl apply -f nodeport-service.yaml
+
+kubectl get deployment -o wide
+kubectl get svc  -o wide
+
+#View endpoints
+kubectl get endpoints webapp-service
+
+# Access pod via external service
+-via browser-
+http://<any-node-public-ip>:30080   (as long as AWS SG allows)
+-or via cli-
+curl http://$PRIVATE_IP1:30080
+curl http://$PUBLIC_IP:30080
+curl http://<any-node-public-ip>:30080
+
+#Cleanup
+kubectl delete deployment webapp-deployment
+kubectl delete svc webapp-service
+
+
+Q - What are all these ports in Service for, explain each?
+
+  - port: 80          
+    targetPort: 80   
+    nodePort: 30080 
