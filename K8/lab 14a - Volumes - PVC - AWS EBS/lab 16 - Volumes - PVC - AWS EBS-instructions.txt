@@ -1,0 +1,52 @@
+=================================
+lab 16 - Volumes - PVC - AWS EBS
+=================================
+
+1. Create IAM Role for EC2 K8 Node with IAM policy AND then attach it to EC2
+   - AmazonEBSCSIDriverPolicy
+   
+2. Install the AWS EBS CSI Driver
+
+kubectl apply -k "https://github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.29"
+
+3. Verify the controller and node pods are running in kube-system namespace
+You Will see ebs-csi-* pods running (give it a minute)
+
+kubectl get pods -n kube-system 
+
+4. Apply K8 storage class configuation
+
+5. Apply K8 PVC configuation and verify status
+
+Question: Why is the PVC always in 'Pending' state?
+*TODO:  Send me the answer in private Chat.
+
+6. Apply K8 Pod configuration
+- Verify pod, PVC and PV status
+- Notice something different about the PVC state now?
+
+7 - Confirm via AWS Web Console that new EBS volume was created
+* TODO: Execute the aws cli command to list all EBS volumes.
+        - If your aws cli is not set up then install it and set it up
+		- Send me the "aws" command you used in private Chat.
+		
+8 - The pod-ebs.yaml wrote a test file "test.txt" to the EBS volume
+    You need to delete the pod and then re-create it in order to confirm that the 
+	file was persisted and remains available for the new pod.
+    - kubectl delete pod test-pod-ebs-storage
+    - kubectl apply -f pod-ebs.yaml
+    - kubectl exec test-pod-ebs-storage -- cat /mnt/ebs/test.txt
+
+Question: Why did the EBS -not- get deleted once the pod was deleted?
+     *TODO:  Send me the answer in private Chat.
+	 
+	 
+9 - Cleanup everything
+# Cleanup
+kubectl delete pod test-pod-ebs-storage
+kubectl delete pvc my-ebs-pvc
+kubectl delete sc ebs-gp3-sc
+
+kubectl delete -k "https://github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=release-1.29"
+
+

@@ -1,0 +1,11 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ebs-gp3-sc
+provisioner: ebs.csi.aws.com # This MUST match the provisioner name from the CSI driver
+reclaimPolicy: Retain         # Make sure to remove EBS after demo!
+volumeBindingMode: WaitForFirstConsumer # Ensures volume is created in the correct AZ  (K8 Woker AZ == EBS AZ)
+parameters:
+  type: gp3                   # General Purpose SSD (recommended type)
+  fsType: ext4
+allowVolumeExpansion: false

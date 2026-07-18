@@ -1,0 +1,12 @@
+# pvc-ebs-claim.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-ebs-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce # RWO is standard for EBS due to 1 AZ limitation
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ebs-gp3-sc # References name from sc-ebs-gp3.yaml
