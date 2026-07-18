@@ -1,0 +1,53 @@
+=================================
+lab 17 - Volumes - AWS S3
+=================================
+1. Create IAM Role for EC2 K8 Node with IAM policy AND then attach it to EC2
+   - TODO: Which IAM Policy should you use for K8 node to be able to create S3 Bucket and read/write to it?
+   - Can add the new IAM S3 Policy to the IAM Role you created in Lab 16
+   
+2. Create AWS S3 Bucket via aws cli (ensure it has a unique name)
+* TODO: 
+		- Send me the "aws" command you used in private Chat.
+
+3 - Install the Mountpoint for S3 CSI Driver
+kubectl apply -k "https://github.com/awslabs/mountpoint-s3-csi-driver/deploy/kubernetes/overlays/stable"
+
+# Fix missing permissions  (patch for lab), you must execute this script. ignore warnings in output
+./01-setup-permissions.sh
+
+4 - Apply  the StorageClass config
+kubectl apply -f sc-s3.yaml
+
+5 - Apply the PersistentVolume (PV) config
+* TODO: Replace the missing "????" with what is needed
+kubectl apply -f pv-s3.yaml
+
+
+6 - Apply the PersistentVolumeClaim (PVC)
+* TODO: Replace the missing "????" with what is needed
+kubectl apply -f pvc-s3-claim.yaml
+
+7 - Check to ensure the PVC is Bound to the PV
+kubectl get ?????
+
+8 -  Create a Pod to Mount the S3 Bucket
+* TODO: Replace the missing "????" with what is needed
+kubectl apply -f pod-s3.yaml
+
+9 - Verify pod logs and confirm file was created
+kubectl logs test-pod-s3-storage
+
+10 - GOTO AWS S3 WEB CONSOLE AND SEE FILE CREATED!
+
+11- TODO: Execute aws cli command to list files in S3 bucket to confirm file is there
+     - Send me the screen shot in chat 
+
+
+
+#Cleanup
+kubectl delete pod test-pod-s3-storage
+kubectl delete pvc my-s3-pvc
+kubectl delete pv s3-pv-claim
+kubectl delete  -k "https://github.com/awslabs/mountpoint-s3-csi-driver/deploy/kubernetes/overlays/stable"
+
+#Manually delete S3 bucket on AWS console
