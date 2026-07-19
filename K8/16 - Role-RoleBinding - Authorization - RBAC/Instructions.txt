@@ -1,0 +1,35 @@
+1. List available contexts
+kubectl config get-contexts 
+
+2. Apply the Role and RoleBinding for RBAC Authorization
+kubectl apply -f rbac.yaml  --context=kubernetes-admin@kubernetes
+
+3. View Role and RoleBinding state
+kubectl get role -n prod-ns --context=kubernetes-admin@kubernetes
+kubectl get rolebinding -n prod-ns --context=kubernetes-admin@kubernetes
+
+4. Test if you can get info on a deployment as the default user1 context
+kubectl auth can-i get deployments -n prod-ns
+
+5. As user1, attempt to delete a deployment. 
+kubectl auth can-i delete deployments -n prod-ns
+Question: Why cant user1 delete a deployment?
+
+6. Kick off a real deployment as the admin user since user1 cannot
+kubectl apply -f deployment.yaml --context=kubernetes-admin@kubernetes
+
+7. Try to get deployment info as user1 since its a "get". Should work!
+kubectl get deployment
+
+8. delete the deployment as user1
+kubectl delete deployment demo-deployment -n prod-ns
+Question: Is this normal that this does not work? if so, why?
+
+9. Cleanup
+kubectl delete deployment demo-deployment -n prod-ns --context=kubernetes-admin@kubernetes
+kubectl delete rolebinding read-deployments -n prod-ns --context=kubernetes-admin@kubernetes
+kubectl delete role read-deployments -n prod-ns --context=kubernetes-admin@kubernetes
+
+10. Set the default context back to admin
+kubectl config use-context kubernetes-admin@kubernetes
+kubectl config get-contexts
