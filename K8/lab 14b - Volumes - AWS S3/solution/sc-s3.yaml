@@ -1,0 +1,8 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: s3-mountpoint-sc
+provisioner: s3.csi.aws.com 
+reclaimPolicy: Retain         
+volumeBindingMode: Immediate  # Bind immediately once PV/PVC match
+allowVolumeExpansion: false
