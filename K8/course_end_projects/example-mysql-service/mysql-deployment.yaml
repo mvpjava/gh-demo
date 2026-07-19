@@ -1,0 +1,68 @@
+# ------------------------------------------------------------
+# 1. MySQL Deployment
+# ------------------------------------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+  labels:
+    app: mysql
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate # Important for single-replica database deployments with RWO volumes
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          # Gets the root password securely from the Secret we created in Step 3
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: mysql-root-password
+        - name: MYSQL_DATABASE
+          # Gets the database name from the ConfigMap we created in Step 4
+          valueFrom:
+            configMapKeyRef:
+              name: wordpress-config
+              key: WORDPRESS_DB_NAME
+        - name: MYSQL_USER
+          # Gets the database user from the ConfigMap we created in Step 4
+          valueFrom:
+            configMapKeyRef:
+              name: wordpress-config
+              key: WORDPRESS_DB_USER
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql # Default data directory for MySQL
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc # References the PVC we created in Step 2
+---
+# ------------------------------------------------------------
+# 2. MySQL Service (ClusterIP)
+# Provides the stable network name: mysql-service
+# ------------------------------------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  labels:
+    app: mysql
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: mysql
+  type: ClusterIP # Internal-only access

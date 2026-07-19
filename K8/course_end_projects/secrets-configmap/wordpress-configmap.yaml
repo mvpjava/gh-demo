@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wordpress-config
+data:
+  # The name of the Kubernetes service we'll create for MySQL
+  WORDPRESS_DB_HOST: "mysql-service" 
+
+  # The database name to be used by WordPress
+  WORDPRESS_DB_NAME: "wordpressdb" 
+
+  # The database user (non-root) to be used by WordPress
+  WORDPRESS_DB_USER: "wpuser"
