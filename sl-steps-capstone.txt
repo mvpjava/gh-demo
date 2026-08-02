@@ -1,0 +1,36 @@
+1. on dev. machine
+  - ask Kiro to create the front/backend
+  - install docker, docker-compose
+  - run docker-compose up  (test)
+     - ensure both container can communicate
+2. Infrastructure (can do this manually)
+   - ECR (push both front/backend images)
+   - ECS
+     - Create Fargate Cluster
+	 - Create task defn for frontend
+	   - refer to frontend image in ECR
+       - resources (cpu etc ..)
+       - setup an env variable to point to backend service name and port
+     - Create a ECS frontend Service 
+		- refer to tash defn rev number (i.e: 1)
+		- configure # of replicas
+		- configure a ALB
+		- configure Blue/Green 
+	- Do again but for backend service
+		- refer to tash defn rev number (i.e: 1)
+		- configure # of replicas
+		- leave the default rolling deployment
+	- GitHub repo
+3. Create CodeBuild project (CI phase)
+		- create a buildspec.yaml in root of your github project
+		- docker build, tag, push to ECR
+4.	Create CodeDeploy project (CD phase)
+	- Create an Application (ECS)
+	- Deployment Group (point to ECS Cluster, Service)
+	- Deployment (native ECS Rolling/BG)
+5. Create CI/CD Pipeline
+   - Source: GitHub
+   - CI: CodeBuild (must create this before: Step 3)
+   - CD: Point to CodeDeploy project (must create this before: Step 4)
+       - add a lambda during bake time to send request to app
+	     and expect http status code of 200.
