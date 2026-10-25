@@ -1,5 +1,5 @@
 1. on dev. machine
-  - ask Kiro to create the front/backend
+  - ask Kiro to create the front/backend via natural language
   - install docker, docker-compose
   - run docker-compose up  (test)
      - ensure both container can communicate
