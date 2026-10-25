@@ -17,7 +17,7 @@ echo ""
 # Phase 2: Test
 print_phase "STAGE 2: TEST"
 echo "Running unit tests..."
-echo "All 100 tests passed "
+echo "All 100 tests passed! "
 echo ""
 
 # Phase 3: Deploy
