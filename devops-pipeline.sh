@@ -22,5 +22,5 @@ echo ""
 
 # Phase 3: Deploy
 print_phase "STAGE 3: DEPLOY"
-echo "Pushing application to AWS production cluster..."
+echo "Pushing application to AWS production cluster ..."
 echo "Deployment complete!"
