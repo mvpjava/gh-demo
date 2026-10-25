@@ -10,7 +10,7 @@ echo ""
 
 # Phase 1: Build
 print_phase "STAGE 1: BUILD"
-echo "Compiling application source code now..."
+echo "Compiling application source code now ..."
 echo "Artifact app.tar.gz created successfully."
 echo ""
 
