@@ -2,7 +2,7 @@
 
 echo "hello"
 ls -l /tmp
+touch file1.txt file2.doc file3.doc
 find /home/ -name "*.txt"
-touch file2.doc file3.doc
 echo "byte"
 
